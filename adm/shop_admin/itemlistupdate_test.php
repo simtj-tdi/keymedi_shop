@@ -1,0 +1,92 @@
+<?php
+$sub_menu = '400300';
+include_once('./_common.php');
+
+check_demo();
+
+check_admin_token();
+
+if (!count($_POST['chk'])) {
+    alert($_POST['act_button']." 하실 항목을 하나 이상 체크하세요.");
+}
+
+if ($_POST['act_button'] == "선택수정") {
+
+    $ca_id_1 = "";
+    $ca_id_2 = "";
+    $ca_id_3 = "";
+
+    auth_check($auth[$sub_menu], 'w');
+
+    for ($i=0; $i<count($_POST['chk']); $i++) {
+
+        // 실제 번호를 넘김
+        $k = $_POST['chk'][$i];
+
+
+        for ($j = 1; $j < 4; $j++) {
+
+            switch($j){
+                case 1 :
+                    if($_POST['ca_id_' . $i . $j]!="") $ca_id_1 = $_POST['ca_id_' . $i . $j];
+                    if($_POST['ca_id_' . $i . $j . '2']!="") $ca_id_1 = $_POST['ca_id_' . $i . $j . '2'];
+                    if($_POST['ca_id_' . $i . $j . '3']!="") $ca_id_1 = $_POST['ca_id_' . $i . $j . '3'];
+                    break ;
+
+                case 2 :
+                    if($_POST['ca_id_' . $i . $j]!="") $ca_id_2 = $_POST['ca_id_' . $i . $j];
+                    if($_POST['ca_id_' . $i . $j . '2']!="") $ca_id_2 = $_POST['ca_id_' . $i . $j . '2'];
+                    if($_POST['ca_id_' . $i . $j . '3']!="") $ca_id_2 = $_POST['ca_id_' . $i . $j . '3'];
+                    break ;
+
+                case 3 :
+                    if($_POST['ca_id_' . $i . $j]!="") $ca_id_3 = $_POST['ca_id_' . $i . $j];
+                    if($_POST['ca_id_' . $i . $j . '2']!="") $ca_id_3 = $_POST['ca_id_' . $i . $j . '2'];
+                    if($_POST['ca_id_' . $i . $j . '3']!="") $ca_id_3 = $_POST['ca_id_' . $i . $j . '3'];
+                    break ;
+            }
+        }
+        
+        $sql = "update {$g5['g5_shop_item_table']}
+                   set ca_id          = '{$ca_id_1}',
+                       ca_id2         = '{$ca_id_2}',
+                       ca_id3         = '{$ca_id_3}',
+                       it_name        = '{$_POST['it_name'][$k]}',
+                       it_cust_price  = '{$_POST['it_cust_price'][$k]}',
+                       it_price       = '{$_POST['it_price'][$k]}',
+                       it_stock_qty   = '{$_POST['it_stock_qty'][$k]}',
+                       it_skin        = '{$_POST['it_skin'][$k]}',
+                       it_mobile_skin = '{$_POST['it_mobile_skin'][$k]}',
+                       it_use         = '{$_POST['it_use'][$k]}',
+                       it_soldout     = '{$_POST['it_soldout'][$k]}',
+                       it_order       = '{$_POST['it_order'][$k]}',
+                       it_update_time = '".G5_TIME_YMDHIS."'
+                 where it_id   = '{$_POST['it_id'][$k]}' ";
+
+        sql_query($sql);
+    }
+} else if ($_POST['act_button'] == "선택삭제") {
+
+    if ($is_admin != 'super')
+        alert('상품 삭제는 최고관리자만 가능합니다.');
+
+    auth_check($auth[$sub_menu], 'd');
+
+    // _ITEM_DELETE_ 상수를 선언해야 itemdelete.inc.php 가 정상 작동함
+    define('_ITEM_DELETE_', true);
+
+    for ($i=0; $i<count($_POST['chk']); $i++) {
+        // 실제 번호를 넘김
+        $k = $_POST['chk'][$i];
+
+        // include 전에 $it_id 값을 반드시 넘겨야 함
+        $it_id = $_POST['it_id'][$k];
+        include ('./itemdelete.inc.php');
+    }
+}
+if($list_name == "list2"){
+    goto_url("./itemlist2.php?sca=$sca&amp;sst=$sst&amp;sod=$sod&amp;sfl=$sfl&amp;stx=$stx&amp;page=$page&amp;m_class=$m_class");
+}else{
+    goto_url("./itemlist.php?sca=$sca&amp;sst=$sst&amp;sod=$sod&amp;sfl=$sfl&amp;stx=$stx&amp;page=$page&amp;m_class=$m_class");
+}
+?>

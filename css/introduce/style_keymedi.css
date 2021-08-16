@@ -1,0 +1,104 @@
+/* 네비게이션*/
+header {
+  z-index: 10;
+  width: 100%;
+  top: 30px;
+}
+header nav a,
+header nav a:visited {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 300;
+  display: inline-block;
+  margin-right: 40px;
+}
+header nav a:last-child {
+  margin-right: 0px;
+}
+
+/* 상단 */
+.topper {
+  background: #5e5ed2 url(/img/introduce/bg_topper.png) center bottom no-repeat;
+  padding: 117px 0 40px 0;
+}
+.topper h3 {
+  font-size: 40px;
+  line-height: 1.2;
+  letter-spacing: -2px;
+  margin-bottom: 24px;
+}
+.topper p {
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -0.8px;
+  margin-bottom: 28px;
+}
+
+/*slider-nav*/
+.slider-nav {
+  height: 150px;
+}
+.slider-nav li {
+  display: inline-block;
+  width: 150px !important;
+  height: 150px !important;
+  border-radius: 80px;
+  background: #3737a4;
+  margin: 0 24px;
+  cursor: pointer;
+}
+.slider-nav li.active {
+  background: #f5b031;
+}
+/*slider*/
+.slider li {
+  height: 686px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.slick-arrow {
+  display: block;
+  appearance: none;
+  -webkit-appearance: none;
+  font-size: 0;
+  color: transparent;
+  border: none;
+  background-color: transparent;
+  background-image: url(/img/introduce/arrow.png);
+  width: 53px;
+  height: 100px;
+  position: absolute;
+  top: 297px;
+  z-index: 10;
+  cursor: pointer;
+  opacity: 0.7;
+}
+.slick-arrow:hover {
+  opacity: 1;
+}
+.slick-prev {
+  background-position: left;
+  left: 50%;
+  margin-left: -568px;
+}
+.slick-next {
+  background-position: right;
+  right: 50%;
+  margin-right: -568px;
+}
+
+/* Footer */
+footer {
+  background: #4f4fc4 url(/img/introduce/bg_bottom.png) center bottom no-repeat;
+  padding: 56px 0 84px 0;
+}
+footer h4 {
+  font-size: 35px;
+  letter-spacing: -1.75px;
+  margin-bottom: 36px;
+}
+footer p {
+  line-height: 1.5;
+  letter-spacing: -0.8px;
+  margin: 0;
+}

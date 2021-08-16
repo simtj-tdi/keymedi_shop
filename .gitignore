@@ -1,0 +1,10 @@
+# keymedi mall ignore list
+*.jpg
+*.png
+img/
+img2/
+data/cache/
+data/session/
+*.mp3
+*.gif
+*.log

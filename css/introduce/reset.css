@@ -1,0 +1,94 @@
+
+/* 모든 요소 공간 0, 서체 크기 100%, 세로정렬 baseline, 배경색 투명 */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	outline: 0;
+	border: 0;
+	padding: 0;
+	background: transparent;
+}
+/* HTML5 새 요소 초기화 */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+/* 본문 기본 설정, 리스트 블릿 제거, 인용 구문 제거 */
+body {
+	font: 16px/1.5;
+}
+
+/* 목록 및 인용 */
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+/* hr 제거 */
+hr {
+	display: none;
+}
+/* 제목 글꼴 크기 설정 */
+h1, h2, h3, h4, h5, h6 {
+	font-weight: 800;
+}
+h1 {
+	font-size: 36px;
+	margin-bottom: 0.5em;
+}
+h2 {
+	font-size: 20px;
+	margin-bottom: 0.75em;
+}
+h3 {
+	font-size: 18px;
+	font-weight: bold;
+}
+h4 {
+	font-size: 16px;
+	margin-bottom: 16px;
+}
+h5 {
+	margin-bottom: 1.5em;
+}
+h5, h6 {
+	font-weight: bold;
+}
+h1 img, h2 img, h3 img,  h4 img, h5 img, h6 img {
+	margin: 0;
+}
+/* 제목, 단락 상.하 공간 설정 */
+p {
+	margin: 0 0 1.5em 0;
+}
+/* :active, :focus 가상클래스 아웃라인 설정 제거 */
+:active, :focus {
+	outline: 0;
+}
+/* img를 포함한 a요소의 보더, 패딩 초기화 설정 */
+
+
+/* insert, delete */
+ins {
+	text-decoration: none;
+}
+del {
+	text-decoration: line-through;
+}
+/* 테이블 설정 */
+table {
+	width: 100%;
+	margin: 0 ;
+	border-collapse: collapse;
+	border-spacing: 0;
+	table-layout: fixed;
+}
+table, th, td {
+	border: none;
+}
+th, td {
+	text-align: left;
+}
+caption {
+	visibility: hidden;
+	height: 1px;
+}
