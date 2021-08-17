@@ -494,6 +494,13 @@ if ($_SESSION['ss_mb_id']) { // 로그인중이라면
 		*/
     }
     // 자동로그인 end ---------------------------------------
+
+    if (!$_SESSION['ss_mb_id']) {
+        if ($_SERVER['HTTP_REFERER'] == G5_PORTAL_URL || $_SERVER['HTTP_REFERER'] != "") {
+            Header("Location:".G5_REACT_URL."storagelogin");
+            exit;
+        }
+    }
 }
 // 1 1 2 
 $PG_IP = $_SERVER['REMOTE_ADDR'];

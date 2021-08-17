@@ -10,21 +10,25 @@ session_destroy(); // 세션해제함
 //set_cookie('ck_auto', '', 0);
 // 자동로그인 해제 end --------------------------------
 
-if ($url) {
-    $p = @parse_url($url);
-    if ($p['scheme'] || $p['host']) {
-        alert('url에 도메인을 지정할 수 없습니다.');
-    }
+//if ($url) {
+//    $p = @parse_url($url);
+//    if ($p['scheme'] || $p['host']) {
+//        alert('url에 도메인을 지정할 수 없습니다.');
+//    }
+//
+//    if($url == 'shop')
+//        $link = G5_SHOP_URL;
+//    else
+//        $link = $url;
+//} else if ($bo_table) {
+//    $link = G5_BBS_URL.'/board.php?bo_table='.$bo_table;
+//} else {
+//    $link = G5_URL;
+//}
+//
 
-    if($url == 'shop')
-        $link = G5_SHOP_URL;
-    else
-        $link = $url;
-} else if ($bo_table) {
-    $link = G5_BBS_URL.'/board.php?bo_table='.$bo_table;
-} else {
-    $link = G5_URL;
-}
+//goto_url($link);
 
-goto_url($link);
+Header("Location:".G5_REACT_URL."logout");
+exit;
 ?>

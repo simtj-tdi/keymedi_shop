@@ -9,60 +9,129 @@ $mb_password = trim($_POST['mb_password']);
 if (!$mb_id || !$mb_password)
     alert('회원아이디나 비밀번호가 공백이면 안됩니다.');
 
-$mb = get_member($mb_id);
+if ($mb_id != $config['cf_admin'] && $mb_id!='ijump01') {
+    // 관리자 회원이 아닐 경우
 
-// 가입된 회원이 아니다. 비밀번호가 틀리다. 라는 메세지를 따로 보여주지 않는 이유는
-// 회원아이디를 입력해 보고 맞으면 또 비밀번호를 입력해보는 경우를 방지하기 위해서입니다.
-// 불법사용자의 경우 회원아이디가 틀린지, 비밀번호가 틀린지를 알기까지는 많은 시간이 소요되기 때문입니다.
-if (!$mb['mb_id'] || !check_password($mb_password, $mb['mb_password'])) {
-    alert('가입된 회원아이디가 아니거나 비밀번호가 틀립니다.\\n비밀번호는 대소문자를 구분합니다.');
-}
+    $ku = new keymedi_curl();
+    $ku->keymedi_login($mb_id, $mb_password);
+    $access_token = $ku->get_access_token();
 
-// 차단된 아이디인가?
-if ($mb['mb_intercept_date'] && $mb['mb_intercept_date'] <= date("Ymd", G5_SERVER_TIME)) {
-    $date = preg_replace("/([0-9]{4})([0-9]{2})([0-9]{2})/", "\\1년 \\2월 \\3일", $mb['mb_intercept_date']);
-    alert('회원님의 아이디는 접근이 금지되어 있습니다.\n처리일 : '.$date);
-}
+    if (!$access_token) {
+        alert('가입된 회원아이디가 아니거나 비밀번호가 틀립니다.\\n비밀번호는 대소문자를 구분합니다.');
+    }
 
-// 탈퇴한 아이디인가?
-if ($mb['mb_leave_date'] && $mb['mb_leave_date'] <= date("Ymd", G5_SERVER_TIME)) {
-    $date = preg_replace("/([0-9]{4})([0-9]{2})([0-9]{2})/", "\\1년 \\2월 \\3일", $mb['mb_leave_date']);
-    alert('탈퇴한 아이디이므로 접근하실 수 없습니다.\n탈퇴일 : '.$date);
-}
+    $portal_mb = $ku->get_member_info();
 
-if ($config['cf_use_email_certify'] && !preg_match("/[1-9]/", $mb['mb_email_certify'])) {
-    $ckey = md5($mb['mb_ip'].$mb['mb_datetime']);
-    confirm("{$mb['mb_email']} 메일로 메일인증을 받으셔야 로그인 가능합니다. 다른 메일주소로 변경하여 인증하시려면 취소를 클릭하시기 바랍니다.", G5_URL, G5_BBS_URL.'/register_email.php?mb_id='.$mb_id.'&ckey='.$ckey);
-}
+    if (is_null($portal_mb)) {
+        alert('가입된 회원아이디가 아니거나 비밀번호가 틀립니다.\\n비밀번호는 대소문자를 구분합니다.');
+    }
 
-@include_once($member_skin_path.'/login_check.skin.php');
+    $mb = get_member($portal_mb['info']['uid']);
 
-// 회원아이디 세션 생성
-set_session('ss_mb_id', $mb['mb_id']);
-// FLASH XSS 공격에 대응하기 위하여 회원의 고유키를 생성해 놓는다. 관리자에서 검사함 - 110106
-set_session('ss_mb_key', md5($mb['mb_datetime'] . $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']));
+    if (!$mb) {
+        // portal 회원이 없을 경우
+        $mb_sex = $portal_mb['info']['gender'] === "male" ? 'M' : 'F';
+        $mb_birth = str_replace('-', '', $portal_mb['info']['birthdate']);
 
-// 포인트 체크
-if($config['cf_use_point']) {
-    $sum_point = get_point_sum($mb['mb_id']);
+        if (strlen($portal_mb['info']['mobile']) == 10) {
+            $mb_hp = preg_replace("/([0-9]{3})([0-9]{3})([0-9]{4})/", "$1-$2-$3", $portal_mb['info']['mobile']);
+        } else {
+            $mb_hp = preg_replace("/([0-9]{3})([0-9]{4})([0-9]{4})/", "$1-$2-$3", $portal_mb['info']['mobile']);
+        }
 
-    $sql= " update {$g5['member_table']} set mb_point = '$sum_point' where mb_id = '{$mb['mb_id']}' ";
-    sql_query($sql);
-}
+        $mb_1 = ""; // 의사면허번호
+        $mb_5 = ""; // 우편번호
+        $mb_6 = ""; // 주소 1
+        $mb_7 = ""; // 주소 2
+        $mb_8 = $mb_hp;
+        $mb_9 = ""; // 대표진료과
+        $mb_9_sub = ""; // 상세진료과
+        $mb_11 = ""; // 근무처
+        $mb_15 = ""; // 사업자등록번호
 
-// 3.26
-// 아이디 쿠키에 한달간 저장
-if ($auto_login) {
-    // 3.27
-    // 자동로그인 ---------------------------
-    // 쿠키 한달간 저장
-    $key = md5($_SERVER['SERVER_ADDR'] . $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT'] . $mb['mb_password']);
-    set_cookie('ck_mb_id', $mb['mb_id'], 86400 * 31);
-    set_cookie('ck_auto', $key, 86400 * 31);
-    // 자동로그인 end ---------------------------
+        // insert
+        $sql = " insert into {$g5['member_table']}
+            set mb_id = '{$portal_mb['info']['uid']}',
+            mb_type = '3',
+            mb_level = '6',
+            mb_shop = '2',
+            mb_v = '1',
+            mb_where = '메디포털',
+            mb_name = '{$portal_mb['info']['name']}',
+            mb_nick = '{$portal_mb['info']['name']}',
+            mb_email = '{$portal_mb['shop_info']['email']}',
+            mb_sex = '{$mb_sex}',
+            mb_birth = '{$mb_birth}',
+            mb_hp = '{$mb_hp}',
+            mb_1 = '',
+            mb_5 = '',
+            mb_6 = '',
+            mb_7 = '',
+            mb_8 = '',
+            mb_9 = '',
+            mb_9_sub = '',
+            mb_11 = '',
+            mb_15 = '',
+            mb_datetime = now()
+        ";
+
+        sql_query($sql);
+
+        $mb = get_member($portal_mb['uid']);
+    }
+// 회원이 있을 경우 업데이트
+
+
+    // 회원아이디 세션 생성
+    set_session('ss_mb_id', $mb['mb_id']);
+    // FLASH XSS 공격에 대응하기 위하여 회원의 고유키를 생성해 놓는다. 관리자에서 검사함 - 110106
+    set_session('ss_mb_key', md5($mb['mb_datetime'] . $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']));
+
+    // 회원토큰 세션 생성
+    set_session('ss_mb_access_token', $access_token);
+
+    // 포인트 체크
+    if($config['cf_use_point']) {
+
+        $user_balance = $ku->get_member_point()['user_balance'];
+        if ($user_balance) {
+            $sum_point =  (int)$user_balance['credit_balance'] + (int)$user_balance['point_balance'];
+        } else {
+            $sum_point = 0;
+        }
+
+        $sql= " update {$g5['member_table']} set mb_point = '$sum_point' where mb_id = '{$mb['mb_id']}' ";
+
+        sql_query($sql);
+
+    }
+
+    Header("Location:".G5_REACT_URL."tokenlogin?token={$access_token}");
+    exit;
 } else {
-    set_cookie('ck_mb_id', '', 0);
-    set_cookie('ck_auto', '', 0);
+    // 관리자 회원 일 때만
+
+    $mb = get_member($mb_id);
+
+    // 가입된 회원이 아니다. 비밀번호가 틀리다. 라는 메세지를 따로 보여주지 않는 이유는
+    // 회원아이디를 입력해 보고 맞으면 또 비밀번호를 입력해보는 경우를 방지하기 위해서입니다.
+    // 불법사용자의 경우 회원아이디가 틀린지, 비밀번호가 틀린지를 알기까지는 많은 시간이 소요되기 때문입니다.
+    if (!$mb['mb_id'] || !check_password($mb_password, $mb['mb_password'])) {
+        alert('가입된 회원아이디가 아니거나 비밀번호가 틀립니다.\\n비밀번호는 대소문자를 구분합니다.');
+    }
+
+    // 회원아이디 세션 생성
+    set_session('ss_mb_id', $mb['mb_id']);
+    // FLASH XSS 공격에 대응하기 위하여 회원의 고유키를 생성해 놓는다. 관리자에서 검사함 - 110106
+    set_session('ss_mb_key', md5($mb['mb_datetime'] . $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']));
+
+    // 포인트 체크
+    if($config['cf_use_point']) {
+        $sum_point = get_point_sum($mb['mb_id']);
+
+        $sql= " update {$g5['member_table']} set mb_point = '$sum_point' where mb_id = '{$mb['mb_id']}' ";
+        sql_query($sql);
+    }
 }
 
 if ($url) {
