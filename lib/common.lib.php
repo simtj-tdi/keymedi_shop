@@ -1544,7 +1544,9 @@ function sql_password($value)
 {
     // mysql 4.0x 이하 버전에서는 password() 함수의 결과가 16bytes
     // mysql 4.1x 이상 버전에서는 password() 함수의 결과가 41bytes
-    $row = sql_fetch(" select password('$value') as pass ");
+//    $row = sql_fetch(" select password('$value') as pass ");
+
+    $row = sql_fetch(" select CONCAT('*', UPPER(SHA1(UNHEX(SHA1(('$value')))))) as pass ");
 
     return $row['pass'];
 }

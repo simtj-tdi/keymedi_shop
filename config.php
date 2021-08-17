@@ -27,14 +27,14 @@ if (PHP_VERSION >= '5.1.0') {
 보안서버주소가 없다면 공란으로 두시면 되며 보안서버주소 뒤에 / 는 붙이지 않습니다.
 입력예) https://www.domain.com:443/gnuboard5
 */
-define('G5_DOMAIN', 'shop.test');
-define('G5_HTTPS_DOMAIN', '.shop.test');
+define('G5_DOMAIN', '');
+define('G5_HTTPS_DOMAIN', '');
 
 /*
 www.sir.kr 과 sir.kr 도메인은 서로 다른 도메인으로 인식합니다. 쿠키를 공유하려면 .sir.kr 과 같이 입력하세요.
 이곳에 입력이 없다면 www 붙은 도메인과 그렇지 않은 도메인은 쿠키를 공유하지 않으므로 로그인이 풀릴 수 있습니다.
 */
-define('G5_COOKIE_DOMAIN',  '.keymedi.com');
+define('G5_COOKIE_DOMAIN',  '.shop.test');
 //define('G5_COOKIE_DOMAIN',  '.mainp.kr');
 
 define('G5_DBCONFIG_FILE',  'dbconfig.php');

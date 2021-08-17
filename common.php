@@ -427,6 +427,11 @@ if (isset($_REQUEST['gr_id'])) {
 //	$member_confirm_link = "http://obgy.keymedi.com";
 //	$point_txt = "마일리지";
 //}
+$g5['member_table'] = "portal.g5_member";
+$g5['point_table'] = "portal.g5_point";
+$member_confirm_link = "http://www.keymedi.com";
+$point_txt = "키메디포인트";
+
 
 //echo $g5['point_table'];
 // 자동로그인 부분에서 첫로그인에 포인트 부여하던것을 로그인중일때로 변경하면서 코드도 대폭 수정하였습니다.
