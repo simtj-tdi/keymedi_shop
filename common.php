@@ -1,4 +1,5 @@
 <?php
+ob_start();
 /*******************************************************************************
 ** 공통 변수, 상수, 코드
 *******************************************************************************/
@@ -414,23 +415,23 @@ if (isset($_REQUEST['gr_id'])) {
 }
 //===================================
 
-if($_SERVER['HTTP_HOST'] == "shop.keymedi.com" || $_SERVER['HTTP_HOST'] == "shop.keymedi.co.kr"){ 
-//if($_SERVER['HTTP_HOST'] == "shop.mainp.kr"){ 
-	$g5['member_table'] = "portal.g5_member";
-	$g5['point_table'] = "portal.g5_point";
-	$member_confirm_link = "http://www.keymedi.com";
-	$point_txt = "키메디포인트";
-}else{
-	$g5['member_table'] = "shop.g5_member";
-	$g5['point_table'] = "shop.g5_point";
-	$member_confirm_link = "http://obgy.keymedi.com";
-	$point_txt = "마일리지";
-}
+//if($_SERVER['HTTP_HOST'] == "shop.keymedi.com" || $_SERVER['HTTP_HOST'] == "shop.keymedi.co.kr"){
+////if($_SERVER['HTTP_HOST'] == "shop.mainp.kr"){
+//	$g5['member_table'] = "portal.g5_member";
+//	$g5['point_table'] = "portal.g5_point";
+//	$member_confirm_link = "http://www.keymedi.com";
+//	$point_txt = "키메디포인트";
+//}else{
+//	$g5['member_table'] = "shop.g5_member";
+//	$g5['point_table'] = "shop.g5_point";
+//	$member_confirm_link = "http://obgy.keymedi.com";
+//	$point_txt = "마일리지";
+//}
 
 //echo $g5['point_table'];
 // 자동로그인 부분에서 첫로그인에 포인트 부여하던것을 로그인중일때로 변경하면서 코드도 대폭 수정하였습니다.
 if ($_SESSION['ss_mb_id']) { // 로그인중이라면
-	
+
     $member = get_member($_SESSION['ss_mb_id']);
 
 	if($member[mb_where] != "산부인과 협동조합" ){
@@ -438,7 +439,7 @@ if ($_SESSION['ss_mb_id']) { // 로그인중이라면
 	}
 
 	$member['mb_point'] =  get_point_sum( $member['mb_id']);
-	
+
     // 차단된 회원이면 ss_mb_id 초기화
     if($member['mb_intercept_date'] && $member['mb_intercept_date'] <= date("Ymd", G5_SERVER_TIME)) {
         set_session('ss_mb_id', '');
@@ -488,74 +489,74 @@ if ($_SESSION['ss_mb_id']) { // 로그인중이라면
 		*/
     }
     // 자동로그인 end ---------------------------------------
-}  
-// 1 1 2 
-$PG_IP = $_SERVER['REMOTE_ADDR']; 
-
-if( $PG_IP != "203.238.37.3" && $PG_IP != "203.238.37.15" && $PG_IP != "203.238.37.16" && $PG_IP != "203.238.37.25" && $PG_IP != "39.115.212.9" )  //PG에서 보냈는지 IP로 체크
-{	
-	if(!$member[mb_id]){
-		if($_SERVER['HTTP_HOST'] == "shop.keymedi.com" || $_SERVER['HTTP_HOST'] == "shop.keymedi.co.kr"){ 
-		//if($_SERVER['HTTP_HOST'] == "shop.mainp.kr"){ 
-			//alert("키메디 로그인 이후 이용부탁드립니다.","http://www.keymedi.com/bbs/login.php?url=".urlencode("http://shop.keymedi.com".$_SERVER['REQUEST_URI']));
-			//alert("키메디 로그인 이후 이용부탁드립니다.","http://portal.mainp.kr/bbs/login.php?url=".urlencode("http://portal.mainp.kr".$_SERVER['REQUEST_URI']));
-		}else{
-			//alert("협동조합몰 로그인 이후 이용부탁드립니다.","http://obgy.keymedi.com");
-		}
-	}
-
-	if($member[mb_level] < 10 && $member[mb_v] != "4"){
- 
-		if($member[mb_where] == "메디포털"){
-			if($_SERVER['HTTP_HOST'] == "shop.keymedi.com" || $_SERVER['HTTP_HOST'] == "shop.keymedi.co.kr"){ }else{
-			//if($_SERVER['HTTP_HOST'] == "shop.mainp.kr" || $_SERVER['HTTP_HOST'] == "shop.mainp.kr"){ }else{
-				alert("키메디 회원이신분들은 메디몰로 이동합니다.","http://shop.keymedi.com");
-			}
-
-			if($member[mb_shop] != "2"){
-				 //alert("접근하실수 없습니다.","http://www.keymedi.com/");	
-			}
-			
-			if($member[mb_v] == "4"){
-
-			}else if($member[mb_v] == "1"){
-				if($member[mb_level] < 4){ 
-					alert("승인처리중 접근하실수 없습니다.","http://www.keymedi.com/");	
-					//alert("승인처리중 접근하실수 없습니다.","http://portal.mainp.kr");	
-				}
-			} 
-
-		}else if($member[mb_where] == "산부인과 협동조합"){
-			if($_SERVER['HTTP_HOST'] == "obgys.keymedi.com" || $_SERVER['HTTP_HOST'] == "obgys.keymedi.co.kr"){ }else{
-			//if($_SERVER['HTTP_HOST'] == "obgys.mainp.kr" || $_SERVER['HTTP_HOST'] == "obgys.mainp.kr"){ }else{
-				alert("협동조합몰 회원이신분들은 해당조합몰로 이동합니다.","http://obgys.keymedi.com");
-			}
-			
-			if($member[mb_shop] != "2"){
-				alert("접근하실수 없습니다.","http://obgy.keymedi.com/");	
-                //alert("접근하실수 없습니다.","http://obgy.mainp.kr");	
-			}
-			
-			if($member[mb_v] == "4"){
-
-			}else if($member[mb_v] == "1"){
-				if($member[mb_level] < 4){ 
-					alert("승인처리중 접근하실수 없습니다.","http://obgy.keymedi.com");	
-				}
-			} 
-
-		}else{
-			if($_SERVER['HTTP_HOST'] == "shop.keymedi.com" || $_SERVER['HTTP_HOST'] == "shop.keymedi.co.kr"){ }else{
-                // alert("접근하실수 없습니다.","http://obgy.keymedi.com/");
-                
-                echo '<meta http-equiv="refresh" content="0; url=http://obgy.keymedi.com/"></meta>'; exit;
-			}
-		}
-
-	}
-		
-	
 }
+// 1 1 2 
+$PG_IP = $_SERVER['REMOTE_ADDR'];
+
+//if( $PG_IP != "203.238.37.3" && $PG_IP != "203.238.37.15" && $PG_IP != "203.238.37.16" && $PG_IP != "203.238.37.25" && $PG_IP != "39.115.212.9" )  //PG에서 보냈는지 IP로 체크
+//{
+//	if(!$member[mb_id]){
+//		if($_SERVER['HTTP_HOST'] == "shop.keymedi.com" || $_SERVER['HTTP_HOST'] == "shop.keymedi.co.kr"){
+//		//if($_SERVER['HTTP_HOST'] == "shop.mainp.kr"){
+//			//alert("키메디 로그인 이후 이용부탁드립니다.","http://www.keymedi.com/bbs/login.php?url=".urlencode("http://shop.keymedi.com".$_SERVER['REQUEST_URI']));
+//			//alert("키메디 로그인 이후 이용부탁드립니다.","http://portal.mainp.kr/bbs/login.php?url=".urlencode("http://portal.mainp.kr".$_SERVER['REQUEST_URI']));
+//		}else{
+//			//alert("협동조합몰 로그인 이후 이용부탁드립니다.","http://obgy.keymedi.com");
+//		}
+//	}
+//
+//	if($member[mb_level] < 10 && $member[mb_v] != "4"){
+//
+//		if($member[mb_where] == "메디포털"){
+//			if($_SERVER['HTTP_HOST'] == "shop.keymedi.com" || $_SERVER['HTTP_HOST'] == "shop.keymedi.co.kr"){ }else{
+//			//if($_SERVER['HTTP_HOST'] == "shop.mainp.kr" || $_SERVER['HTTP_HOST'] == "shop.mainp.kr"){ }else{
+//				alert("키메디 회원이신분들은 메디몰로 이동합니다.","http://shop.keymedi.com");
+//			}
+//
+//			if($member[mb_shop] != "2"){
+//				 //alert("접근하실수 없습니다.","http://www.keymedi.com/");
+//			}
+//
+//			if($member[mb_v] == "4"){
+//
+//			}else if($member[mb_v] == "1"){
+//				if($member[mb_level] < 4){
+//					alert("승인처리중 접근하실수 없습니다.","http://www.keymedi.com/");
+//					//alert("승인처리중 접근하실수 없습니다.","http://portal.mainp.kr");
+//				}
+//			}
+//
+//		}else if($member[mb_where] == "산부인과 협동조합"){
+//			if($_SERVER['HTTP_HOST'] == "obgys.keymedi.com" || $_SERVER['HTTP_HOST'] == "obgys.keymedi.co.kr"){ }else{
+//			//if($_SERVER['HTTP_HOST'] == "obgys.mainp.kr" || $_SERVER['HTTP_HOST'] == "obgys.mainp.kr"){ }else{
+//				alert("협동조합몰 회원이신분들은 해당조합몰로 이동합니다.","http://obgys.keymedi.com");
+//			}
+//
+//			if($member[mb_shop] != "2"){
+//				alert("접근하실수 없습니다.","http://obgy.keymedi.com/");
+//                //alert("접근하실수 없습니다.","http://obgy.mainp.kr");
+//			}
+//
+//			if($member[mb_v] == "4"){
+//
+//			}else if($member[mb_v] == "1"){
+//				if($member[mb_level] < 4){
+//					alert("승인처리중 접근하실수 없습니다.","http://obgy.keymedi.com");
+//				}
+//			}
+//
+//		}else{
+//			if($_SERVER['HTTP_HOST'] == "shop.keymedi.com" || $_SERVER['HTTP_HOST'] == "shop.keymedi.co.kr"){ }else{
+//                // alert("접근하실수 없습니다.","http://obgy.keymedi.com/");
+//
+//                echo '<meta http-equiv="refresh" content="0; url=http://obgy.keymedi.com/"></meta>'; exit;
+//			}
+//		}
+//
+//	}
+//
+//
+//}
 
 
 
@@ -635,7 +636,7 @@ if($member[mb_level] < 10 && $member[mb_v] != "4" ){
 	if($member[mb_where] == "메디포털"){
 		 $config['cf_theme'] = "basic2";
 		 define('SITE_CODE', "mall");
-	}else if($member[mb_where] == "산부인과 협동조합"){ 
+	}else if($member[mb_where] == "산부인과 협동조합"){
 		 $config['cf_theme'] = "basic";
 		 define('SITE_CODE', "obgys");
 	}else{
@@ -643,8 +644,8 @@ if($member[mb_level] < 10 && $member[mb_v] != "4" ){
 		 define('SITE_CODE', "mall");
 	}
 }else{
-	//if($_SERVER['HTTP_HOST'] == "shop.keymedi.com" || $_SERVER['HTTP_HOST'] == "shop.keymedi.co.kr"){ 
-	if($_SERVER['HTTP_HOST'] == "shop.mainp.kr" || $_SERVER['HTTP_HOST'] == "shop.keymedi.com" || $_SERVER['HTTP_HOST'] == "shop.keymedi.co.kr"){ 
+	//if($_SERVER['HTTP_HOST'] == "shop.keymedi.com" || $_SERVER['HTTP_HOST'] == "shop.keymedi.co.kr"){
+	if($_SERVER['HTTP_HOST'] == "shop.mainp.kr" || $_SERVER['HTTP_HOST'] == "shop.keymedi.com" || $_SERVER['HTTP_HOST'] == "shop.keymedi.co.kr"){
 		$config['cf_theme'] = "basic2";
 		 define('SITE_CODE', "mall");
 	}else{
